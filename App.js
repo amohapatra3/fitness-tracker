@@ -2,8 +2,10 @@ import React from "react";
 
 import LoginView from "./LoginView";
 import SignupView from "./SignupView";
+import Exercise from "./Exercise";
+import Today from "./Today";
 import ProfileView from "./ProfileView";
-
+import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
 import { createStackNavigator } from "@react-navigation/stack";
 import { NavigationContainer } from "@react-navigation/native";
 
@@ -44,6 +46,77 @@ class App extends React.Component {
     });
   }
 
+  tabNavigator() {
+    const ProfileTab = createBottomTabNavigator();
+    return () => (
+      <ProfileTab.Navigator>
+        <ProfileTab.Screen
+          name="Today"
+          options={{
+            title: "Today",
+            headerRight: () => (
+              <Button
+                onPress={() => navigation.navigate("Login")}
+                title="Info"
+                color="#fff"
+              />
+            ),
+          }}
+        >
+          {(props) => (
+            <Today
+              {...props}
+              userName={this.state.username}
+              accessToken={this.state.accessToken}
+            />
+          )}
+        </ProfileTab.Screen>
+        <ProfileTab.Screen
+          name="Exercise"
+          options={{
+            title: "Exercise",
+            headerRight: () => (
+              <Button
+                onPress={() => navigation.navigate("Login")}
+                title="Info"
+                color="#fff"
+              />
+            ),
+          }}
+        >
+          {(props) => (
+            <Exercise
+              {...props}
+              userName={this.state.username}
+              accessToken={this.state.accessToken}
+            />
+          )}
+        </ProfileTab.Screen>
+        <ProfileTab.Screen
+          name="Goals"
+          options={{
+            title: "Daily Goals",
+            headerRight: () => (
+              <Button
+                onPress={() => navigation.navigate("Login")}
+                title="Info"
+                color="#fff"
+              />
+            ),
+          }}
+        >
+          {(props) => (
+            <ProfileView
+              {...props}
+              username={this.state.username}
+              accessToken={this.state.accessToken}
+              revokeAccessToken={this.revokeAccessToken}
+            />
+          )}
+        </ProfileTab.Screen>
+      </ProfileTab.Navigator>
+    );
+  }
   /**
    * Defines a stack navigator for three screens, LoginView, SignupView, and ProfileView.
    *
@@ -86,14 +159,7 @@ class App extends React.Component {
                 title: "Fitness Tracker",
               }}
             >
-              {(props) => (
-                <ProfileView
-                  {...props}
-                  username={this.state.username}
-                  accessToken={this.state.accessToken}
-                  revokeAccessToken={this.revokeAccessToken}
-                />
-              )}
+              {this.tabNavigator()})
             </AuthStack.Screen>
           )}
         </AuthStack.Navigator>
