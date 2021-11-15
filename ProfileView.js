@@ -26,6 +26,13 @@ class ProfileView extends React.Component {
           name="Today"
           options={{
             title: "Today's Report",
+            headerRight: () => (
+              <Button
+                onPress={() => this.props.revokeAccessToken()}
+                title="Sign Out"
+                color="#000"
+              />
+            ),
           }}
         >
           {(props) => (
@@ -41,6 +48,13 @@ class ProfileView extends React.Component {
           name="Exercise"
           options={{
             title: "Add Exercise",
+            headerRight: () => (
+              <Button
+                onPress={() => this.props.revokeAccessToken()}
+                title="Sign Out"
+                color="#000"
+              />
+            ),
           }}
         >
           {(props) => (
@@ -56,6 +70,13 @@ class ProfileView extends React.Component {
           name="Goals"
           options={{
             title: "Daily Goals",
+            headerRight: () => (
+              <Button
+                onPress={() => this.props.revokeAccessToken()}
+                title="Sign Out"
+                color="#000"
+              />
+            ),
           }}
         >
           {(props) => (
