@@ -178,7 +178,7 @@ class Exercise extends React.Component {
         <View>
           <View>
             <Button
-              onPress={() => this.showTimepicker()}
+              onPress={() => this.showDatepicker()}
               style={styles.buttonInline}
               title="Pick date"
             />
