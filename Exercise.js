@@ -10,6 +10,7 @@ import {
 } from "react-native";
 import Icon from "react-native-vector-icons/FontAwesome5";
 import DateTimePicker from "@react-native-community/datetimepicker";
+
 class Exercise extends React.Component {
   constructor() {
     super();
@@ -21,11 +22,10 @@ class Exercise extends React.Component {
       duration: 0.0,
       date: new Date(),
       calories: 0.0,
-      show: "false",
+      show: false,
       mode: "date",
     };
   }
-
   onChange(event, selectedDate) {
     const currentDate = selectedDate || this.state.date;
     this.setState({
@@ -40,14 +40,14 @@ class Exercise extends React.Component {
       mode: currentMode,
     });
   }
+
   showDatepicker() {
-    showMode("date");
+    this.showMode("date");
   }
 
   showTimepicker() {
-    showMode("time");
+    this.showMode("time");
   }
-
   /**
    * On first load, fetch the user data from the `/users` endpoint.
    *
@@ -178,14 +178,14 @@ class Exercise extends React.Component {
         <View>
           <View>
             <Button
-              onPress={this.showDatepicker}
+              onPress={() => this.showTimepicker()}
               style={styles.buttonInline}
               title="Pick date"
             />
           </View>
           <View>
             <Button
-              onPress={this.showTimepicker}
+              onPress={() => this.showTimepicker()}
               style={styles.buttonInline}
               title="Pick Time"
             />
@@ -197,7 +197,7 @@ class Exercise extends React.Component {
               mode={this.state.mode}
               is24Hour={true}
               display="default"
-              onChange={this.onChange}
+              onChange={() => this.onChange()}
             />
           )}
         </View>
