@@ -17,11 +17,13 @@ class Exercise extends React.Component {
 
     // Initialize states which will be used for TextInputs
     this.state = {
+      addMode: false,
+      activities: [],
       id: 0,
       name: "",
-      duration: 0.0,
+      duration: 0,
       date: new Date(),
-      calories: 0.0,
+      calories: 0,
       show: false,
       mode: "date",
     };
@@ -48,33 +50,14 @@ class Exercise extends React.Component {
   showTimepicker() {
     this.showMode("time");
   }
-  /**
-   * On first load, fetch the user data from the `/users` endpoint.
-   *
-   */
-  componentDidMount() {
-    fetch("http://cs571.cs.wisc.edu:5000/activities/" + this.state.id, {
-      method: "GET",
-      headers: { "x-access-token": this.props.accessToken },
-    })
-      .then((res) => res.json())
-      .then((res) => {
-        this.setState({
-          name: res.name,
-          duration: res.duration,
-          date: res.date,
-          calories: res.calories,
-        });
-      });
-  }
 
   /**
-   * Handler for Save Exercise button. Sends a PUT request to the `/users` endpoint.
+   * Handler for Save Exercise button. Sends a PUT request to the `/activities` endpoint.
    *
    */
   handleSaveExercise() {
     fetch("http://cs571.cs.wisc.edu:5000/activities/", {
-      method: "PUT",
+      method: "POST",
       headers: {
         "Content-Type": "application/json",
         "x-access-token": this.props.accessToken,
@@ -90,11 +73,6 @@ class Exercise extends React.Component {
       .then((res) => {
         alert(res.message);
         this.setState({ id: res.id });
-      })
-      .catch((err) => {
-        alert(
-          "Something went wrong! Verify you have filled out the fields correctly."
-        );
       });
   }
 
@@ -104,8 +82,54 @@ class Exercise extends React.Component {
   handleExit() {
     this.props.revokeAccessToken();
   }
-
+  deleteExercise(id) {
+    fetch("http://cs571.cs.wisc.edu:5000/activities/" + id, {
+      method: "DELETE",
+      headers: {
+        "x-access-token": this.props.accessToken,
+      },
+    })
+      .then((res) => res.json())
+      .then((res) => {
+        alert(res.message);
+      });
+  }
+  editExercise(id) {
+    this.setState({
+      addMode: true,
+    });
+    fetch("http://cs571.cs.wisc.edu:5000/activities/" + id, {
+      method: "PUT",
+      headers: {
+        "Content-Type": "application/json",
+        "x-access-token": this.props.accessToken,
+      },
+      body: JSON.stringify({
+        name: this.state.name,
+        duration: this.state.duration,
+        date: this.state.date,
+        calories: this.state.calories,
+      }),
+    })
+      .then((res) => res.json())
+      .then((res) => {
+        alert(res.message);
+      });
+  }
+  getAllExercises() {
+    fetch("http://cs571.cs.wisc.edu:5000/activities/", {
+      method: "GET",
+      headers: { "x-access-token": this.props.accessToken },
+    })
+      .then((res) => res.json())
+      .then((res) => {
+        this.setState({
+          activities: res.activities,
+        });
+      });
+  }
   render() {
+    this.getAllExercises();
     return (
       <ScrollView
         style={styles.mainContainer}
@@ -127,117 +151,150 @@ class Exercise extends React.Component {
         </View>
         <View style={styles.spaceSmall}></View>
         <Text>Exercise is key to a healthy life!</Text>
-        <Text>Specify your exercise activity below.</Text>
-        <View style={styles.space} />
-
-        <Text
-          style={{
-            textAlignVertical: "center",
-            fontWeight: "700",
-            fontSize: 20,
-          }}
-        >
-          Your Exercise Activity
-        </Text>
-        <View style={styles.spaceSmall}></View>
-        <View>
-          <Text style={{ textAlignVertical: "center", fontWeight: "700" }}>
-            Activity Name
-          </Text>
-          <TextInput
-            style={styles.input}
-            underlineColorAndroid="transparent"
-            placeholder="e.g Running"
-            placeholderTextColor="#d9bebd"
-            onChangeText={(activity) => this.setState({ name: activity })}
-            value={this.state.name}
-            autoCapitalize="none"
-          />
-        </View>
-        <View style={styles.spaceSmall}></View>
-        <View>
-          <Text style={{ textAlignVertical: "center", fontWeight: "700" }}>
-            Duration
-          </Text>
-        </View>
-        <TextInput
-          style={styles.input}
-          underlineColorAndroid="transparent"
-          placeholder="in minutes"
-          placeholderTextColor="#d9bebd"
-          onChangeText={(duration) =>
-            this.setState({
-              duration: !duration ? 0 : parseFloat(duration),
-            })
-          }
-          value={this.state.duration + ""}
-          autoCapitalize="none"
+        <Button
+          color="#942a21"
+          style={styles.buttonInline}
+          title="Add Exercise"
+          onPress={() => this.setState({ addMode: true })}
         />
-        <View style={styles.spaceSmall}></View>
+        {this.state.addMode ? (
+          <>
+            <Text>Specify your exercise activity below.</Text>
+            <View style={styles.space} />
 
-        <View>
-          <View>
-            <Button
-              onPress={() => this.showDatepicker()}
-              style={styles.buttonInline}
-              title="Pick date"
+            <Text
+              style={{
+                textAlignVertical: "center",
+                fontWeight: "700",
+                fontSize: 20,
+              }}
+            >
+              Your Exercise Activity
+            </Text>
+            <View style={styles.spaceSmall}></View>
+            <View>
+              <Text style={{ textAlignVertical: "center", fontWeight: "700" }}>
+                Activity Name
+              </Text>
+              <TextInput
+                style={styles.input}
+                underlineColorAndroid="transparent"
+                placeholder="e.g Running"
+                placeholderTextColor="#d9bebd"
+                onChangeText={(activity) => this.setState({ name: activity })}
+                value={this.state.name}
+                autoCapitalize="none"
+              />
+            </View>
+            <View style={styles.spaceSmall}></View>
+            <View>
+              <Text style={{ textAlignVertical: "center", fontWeight: "700" }}>
+                Duration
+              </Text>
+            </View>
+            <TextInput
+              style={styles.input}
+              underlineColorAndroid="transparent"
+              placeholder="in minutes"
+              placeholderTextColor="#d9bebd"
+              onChangeText={(duration) =>
+                this.setState({
+                  duration: !duration ? 0 : parseFloat(duration),
+                })
+              }
+              value={this.state.duration + ""}
+              autoCapitalize="none"
             />
-          </View>
-          <View>
-            <Button
-              onPress={() => this.showTimepicker()}
-              style={styles.buttonInline}
-              title="Pick Time"
-            />
-          </View>
-          {this.state.show && (
-            <DateTimePicker
-              testID="dateTimePicker"
-              value={this.state.date}
-              mode={this.state.mode}
-              is24Hour={true}
-              display="default"
-              onChange={() => this.onChange()}
-            />
-          )}
-        </View>
+            <View style={styles.spaceSmall}></View>
 
-        <View style={styles.spaceSmall}></View>
-        <View>
-          <Text style={{ textAlignVertical: "center", fontWeight: "700" }}>
-            Calories Burnt
-          </Text>
-        </View>
-        <TextInput
-          style={styles.input}
-          underlineColorAndroid="transparent"
-          placeholder="35"
-          placeholderTextColor="#d9bebd"
-          onChangeText={(calories) =>
-            this.setState({
-              calories: !calories ? 0 : parseFloat(calories),
-            })
-          }
-          value={this.state.calories + ""}
-          autoCapitalize="none"
-        />
+            <View>
+              <View>
+                <Button
+                  onPress={() => this.showDatepicker()}
+                  style={styles.buttonInline}
+                  title="Pick date"
+                />
+              </View>
+              <View>
+                <Button
+                  onPress={() => this.showTimepicker()}
+                  style={styles.buttonInline}
+                  title="Pick Time"
+                />
+              </View>
+              {this.state.show && (
+                <DateTimePicker
+                  testID="dateTimePicker"
+                  value={this.state.date}
+                  mode={this.state.mode}
+                  is24Hour={true}
+                  display="default"
+                  onChange={() => this.onChange()}
+                />
+              )}
+            </View>
 
-        <View style={styles.bottomButtons}>
-          <Button
-            color="#942a21"
-            style={styles.buttonInline}
-            title="Add exercise"
-            onPress={() => this.handleSaveExercise()}
-          />
-          <View style={styles.spaceSmall} />
-          <Button
-            color="#942a21"
-            style={styles.buttonInline}
-            title="Exit"
-            onPress={() => this.handleExit()}
-          />
-        </View>
-        <View style={styles.space} />
+            <View style={styles.spaceSmall}></View>
+            <View>
+              <Text style={{ textAlignVertical: "center", fontWeight: "700" }}>
+                Calories Burnt
+              </Text>
+            </View>
+            <TextInput
+              style={styles.input}
+              underlineColorAndroid="transparent"
+              placeholder="35"
+              placeholderTextColor="#d9bebd"
+              onChangeText={(calories) =>
+                this.setState({
+                  calories: !calories ? 0 : parseFloat(calories),
+                })
+              }
+              value={this.state.calories + ""}
+              autoCapitalize="none"
+            />
+
+            <View style={styles.bottomButtons}>
+              <Button
+                color="#942a21"
+                style={styles.buttonInline}
+                title="Add exercise"
+                onPress={() => this.handleSaveExercise()}
+              />
+              <View style={styles.spaceSmall} />
+              <Button
+                color="#942a21"
+                style={styles.buttonInline}
+                title="Exit"
+                onPress={() => this.handleExit()}
+              />
+            </View>
+            <View style={styles.space} />
+          </>
+        ) : (
+          this.state.activities.map((key, index) => {
+            return (
+              <View>
+                <Text>Name {key.name}</Text>
+                <Text>Duration {key.duration}</Text>
+                <Text>Calories{key.calories}</Text>
+                <Text>Date {key.date}</Text>
+                <Button
+                  color="#942a21"
+                  style={styles.buttonInline}
+                  title="Edit"
+                  onPress={() => this.editExercise(key.id)}
+                />
+                <Button
+                  color="#942a21"
+                  style={styles.buttonInline}
+                  title="Delete"
+                  onPress={() => this.deleteExercise(key.id)}
+                />
+              </View>
+            );
+          })
+        )}
       </ScrollView>
     );
   }
