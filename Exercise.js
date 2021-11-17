@@ -271,7 +271,7 @@ class Exercise extends React.Component {
             </View>
             <View style={styles.space} />
           </>
-        ) : (
+        ) : this.state.activities.length > 0 ? (
           this.state.activities.map((key, index) => {
             return (
               <View>
@@ -294,7 +294,7 @@ class Exercise extends React.Component {
               </View>
             );
           })
-        )}
+        ) : null}
       </ScrollView>
     );
   }
