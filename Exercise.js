@@ -76,7 +76,10 @@ class Exercise extends React.Component {
    * Handler for Exit button. Revokes accessToken in the state, automatically redirecting to the LoginView.
    */
   handleExit() {
-    this.props.revokeAccessToken();
+    this.setState({
+      addMode: false,
+      editMode: false,
+    });
   }
   deleteExercise(id) {
     fetch("http://cs571.cs.wisc.edu:5000/activities/" + id, {
@@ -90,8 +93,8 @@ class Exercise extends React.Component {
         alert(res.message);
       });
   }
-  editExercise(id) {
-    fetch("http://cs571.cs.wisc.edu:5000/activities/" + id, {
+  editExercise() {
+    fetch("http://cs571.cs.wisc.edu:5000/activities/" + this.state.id, {
       method: "PUT",
       headers: {
         "Content-Type": "application/json",
@@ -108,6 +111,13 @@ class Exercise extends React.Component {
       .then((res) => {
         alert(res.message);
       });
+  }
+  editExerciseView(id) {
+    this.setState({
+      addMode: true,
+      editMode: true,
+      id: id,
+    });
   }
   getAllExercises() {
     fetch("http://cs571.cs.wisc.edu:5000/activities/", {
@@ -239,12 +249,21 @@ class Exercise extends React.Component {
             />
 
             <View style={styles.bottomButtons}>
-              <Button
-                color="#942a21"
-                style={styles.buttonInline}
-                title="Add exercise"
-                onPress={() => this.handleSaveExercise()}
-              />
+              {!this.state.editMode ? (
+                <Button
+                  color="#942a21"
+                  style={styles.buttonInline}
+                  title="Add exercise"
+                  onPress={() => this.handleSaveExercise()}
+                />
+              ) : (
+                <Button
+                  color="#942a21"
+                  style={styles.buttonInline}
+                  title="Edit exercise"
+                  onPress={() => this.editExercise()}
+                />
+              )}
               <View style={styles.spaceSmall} />
               <Button
                 color="#942a21"
@@ -267,7 +286,7 @@ class Exercise extends React.Component {
                   color="#942a21"
                   style={styles.buttonInline}
                   title="Edit"
-                  onPress={() => this.editExercise(key.id)}
+                  onPress={() => this.editExerciseView(key.id)}
                 />
                 <Button
                   color="#942a21"
