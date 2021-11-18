@@ -10,6 +10,7 @@ import {
 } from "react-native";
 import Icon from "react-native-vector-icons/FontAwesome5";
 import DateTimePicker from "@react-native-community/datetimepicker";
+import DateTimePickerModal from "react-native-modal-datetime-picker";
 
 class Exercise extends React.Component {
   constructor() {
@@ -29,7 +30,7 @@ class Exercise extends React.Component {
     };
   }
   onChange(event, selectedDate) {
-    const currentDate = selectedDate || this.state.date;
+    const currentDate = selectedDate;
     this.setState({
       show: Platform.OS === "ios",
       date: currentDate,
@@ -65,7 +66,7 @@ class Exercise extends React.Component {
       body: JSON.stringify({
         name: this.state.name,
         duration: this.state.duration,
-        date: this.state.date,
+        date: this.state.date.toISOString(),
         calories: this.state.calories,
       }),
     })
@@ -229,7 +230,7 @@ class Exercise extends React.Component {
                   mode={this.state.mode}
                   is24Hour={true}
                   display="default"
-                  onChange={() => this.onChange()}
+                  onChange={(date) => this.setState({ date: date })}
                 />
               )}
             </View>
@@ -271,14 +272,14 @@ class Exercise extends React.Component {
             </View>
             <View style={styles.space} />
           </>
-        ) : this.state.activities.length > 0 ? (
+        ) : this.state.activities ? (
           this.state.activities.map((key, index) => {
             return (
               <View>
-                <Text>Name {key.name}</Text>
-                <Text>Duration {key.duration}</Text>
-                <Text>Calories{key.calories}</Text>
-                <Text>Date {key.date}</Text>
+                <Text key={key.name}>Name {key.name}</Text>
+                <Text key={key.duration}>Duration {key.duration}</Text>
+                <Text key={key.calories}>Calories{key.calories}</Text>
+                <Text key={key.date}>Date {key.date}</Text>
                 <Button
                   color="#942a21"
                   style={styles.buttonInline}
