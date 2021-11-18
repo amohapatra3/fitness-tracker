@@ -19,6 +19,7 @@ class Exercise extends React.Component {
     // Initialize states which will be used for TextInputs
     this.state = {
       addMode: false,
+      editMode: false,
       activities: [],
       id: 0,
       name: "",
@@ -29,28 +30,28 @@ class Exercise extends React.Component {
       mode: "date",
     };
   }
-  onChange(event, selectedDate) {
-    const currentDate = selectedDate || this.state.date;
+  handleDateTimePicker = (selectedDate) => {
     this.setState({
-      date: currentDate,
+      date: selectedDate,
     });
-  }
+  };
 
-  showDateTimepicker() {
+  showDateTimepicker = () => {
     this.setState({
       show: true,
     });
-  }
-  hideDateTimePicker() {
+  };
+  hideDateTimePicker = () => {
     this.setState({
       show: false,
     });
-  }
+  };
   /**
    * Handler for Save Exercise button. Sends a PUT request to the `/activities` endpoint.
    *
    */
   handleSaveExercise() {
+    console.log(this.state.date.toISOString());
     fetch("http://cs571.cs.wisc.edu:5000/activities/", {
       method: "POST",
       headers: {
@@ -60,7 +61,7 @@ class Exercise extends React.Component {
       body: JSON.stringify({
         name: this.state.name,
         duration: this.state.duration,
-        date: this.state.date.toISOString(),
+        date: this.state.date,
         calories: this.state.calories,
       }),
     })
@@ -90,9 +91,6 @@ class Exercise extends React.Component {
       });
   }
   editExercise(id) {
-    this.setState({
-      addMode: true,
-    });
     fetch("http://cs571.cs.wisc.edu:5000/activities/" + id, {
       method: "PUT",
       headers: {
@@ -214,8 +212,9 @@ class Exercise extends React.Component {
               <DateTimePickerModal
                 isVisible={this.state.show}
                 mode="datetime"
-                onConfirm={this.onChange}
-                onCancel={this.hideDatePicker}
+                onConfirm={this.handleDateTimePicker}
+                onCancel={this.hideDateTimePicker}
+                is24Hour={true}
               />
             </View>
 
