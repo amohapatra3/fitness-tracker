@@ -51,7 +51,7 @@ class Exercise extends React.Component {
    *
    */
   handleSaveExercise() {
-    console.log(this.state.date.toISOString());
+    console.log(this.state.date.toDateString());
     fetch("http://cs571.cs.wisc.edu:5000/activities/", {
       method: "POST",
       headers: {
