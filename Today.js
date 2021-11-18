@@ -84,23 +84,25 @@ class Today extends React.Component {
           ? this.state.activities.map((key, index) => {
               if (
                 new Date(key.date).toDateString() === new Date().toDateString()
-              )
+              ) {
                 totalMinutes += key.duration;
-              return (
-                <View>
-                  <Text>{key.name}</Text>
-                  <Text>Duration: {key.duration}</Text>
-                  <Text>Calories: {key.calories}</Text>
-                  <Text>
-                    Date:{" "}
-                    {new Date(key.date).toDateString() +
-                      " " +
-                      new Date(key.date).getHours() +
-                      ":" +
-                      new Date(key.date).getMinutes()}
-                  </Text>
-                </View>
-              );
+                return (
+                  <View>
+                    <Text>{key.name}</Text>
+                    <Text>Duration: {key.duration}</Text>
+                    <Text>Calories: {key.calories}</Text>
+                    <Text>
+                      Date:{" "}
+                      {new Date(key.date).toDateString() +
+                        " " +
+                        new Date(key.date).getHours() +
+                        ":" +
+                        new Date(key.date).getMinutes()}
+                    </Text>
+                    <View style={styles.space} />
+                  </View>
+                );
+              }
             })
           : null}
         <Text> Your exercise minutes goal for the day! </Text>
