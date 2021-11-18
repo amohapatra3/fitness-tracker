@@ -302,6 +302,7 @@ class Exercise extends React.Component {
                   title="Delete"
                   onPress={() => this.deleteExercise(key.id)}
                 />
+                <View style={styles.space} />
               </View>
             );
           })
