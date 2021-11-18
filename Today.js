@@ -8,10 +8,12 @@ import {
 } from "react-native";
 import React from "react";
 import { Dimensions } from "react-native";
+var totalExercise = 0;
+var goal = 0;
+var activities = [];
 class Today extends React.Component {
   constructor() {
     super();
-
     // Initialize states which will be used for TextInputs
     this.state = {
       goalMinutes: 0.0,
@@ -26,52 +28,43 @@ class Today extends React.Component {
     })
       .then((res) => res.json())
       .then((res) => {
-        this.setState({
-          goalMinutes: res.goalDailyActivity,
-        });
+        goal = res.goalDailyActivity;
       });
-  }
-  getAllExercises() {
     fetch("http://cs571.cs.wisc.edu:5000/activities/", {
       method: "GET",
       headers: { "x-access-token": this.props.accessToken },
     })
       .then((res) => res.json())
       .then((res) => {
-        this.setState({
-          activities: res.activities,
-        });
+        activities = res.activities;
       });
 
-    this.state.activities.forEach((element) => {
-      this.setState((prevState) => {
-        return {
-          exerciseMinutes: (prevState.exerciseMinutes += element.duration),
-        };
-      });
+    activities.forEach((element) => {
+      totalExercise += element.duration;
     });
   }
+  getAllExercises() {}
 
   render() {
+    let today = new Date();
     return (
       <View>
         <Text> Your goals for the day! </Text>
-        <Text>
-          {" "}
-          {this.state.exerciseMinutes + "/" + this.state.goalMinutes}
-        </Text>
+        <Text> {totalExercise + "/" + goal}</Text>
         <Text>Your activities today!</Text>
-        <Text>Exercise</Text>
-        {this.state.activities.map((key, index) => {
-          return (
-            <View>
-              <Text>Name: {key.name}</Text>
-              <Text>Duration: {key.duration}</Text>
-              <Text>Calories: {key.calories}</Text>
-              <Text>Date: {key.date}</Text>
-            </View>
-          );
-        })}
+        {activities
+          ? activities.map((key, index) => {
+              //if (key.date.toDateString() === today.toDateString())
+              return (
+                <View>
+                  <Text>{key.name}</Text>
+                  <Text>Duration: {key.duration}</Text>
+                  <Text>Calories: {key.calories}</Text>
+                  <Text>Date: {key.date.toDateString()}</Text>
+                </View>
+              );
+            })
+          : null}
       </View>
     );
   }
