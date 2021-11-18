@@ -30,28 +30,22 @@ class Exercise extends React.Component {
     };
   }
   onChange(event, selectedDate) {
-    const currentDate = selectedDate;
+    const currentDate = selectedDate || this.state.date;
     this.setState({
-      show: Platform.OS === "ios",
       date: currentDate,
     });
   }
 
-  showMode(currentMode) {
+  showDateTimepicker() {
     this.setState({
       show: true,
-      mode: currentMode,
     });
   }
-
-  showDatepicker() {
-    this.showMode("date");
+  hideDateTimePicker() {
+    this.setState({
+      show: false,
+    });
   }
-
-  showTimepicker() {
-    this.showMode("time");
-  }
-
   /**
    * Handler for Save Exercise button. Sends a PUT request to the `/activities` endpoint.
    *
@@ -211,28 +205,18 @@ class Exercise extends React.Component {
             <View>
               <View>
                 <Button
-                  onPress={() => this.showDatepicker()}
+                  onPress={() => this.showDateTimepicker()}
                   style={styles.buttonInline}
-                  title="Pick date"
+                  title="Pick date and time"
                 />
               </View>
-              <View>
-                <Button
-                  onPress={() => this.showTimepicker()}
-                  style={styles.buttonInline}
-                  title="Pick Time"
-                />
-              </View>
-              {this.state.show && (
-                <DateTimePicker
-                  testID="dateTimePicker"
-                  value={this.state.date}
-                  mode={this.state.mode}
-                  is24Hour={true}
-                  display="default"
-                  onChange={(date) => this.setState({ date: date })}
-                />
-              )}
+
+              <DateTimePickerModal
+                isVisible={this.state.show}
+                mode="datetime"
+                onConfirm={this.onChange}
+                onCancel={this.hideDatePicker}
+              />
             </View>
 
             <View style={styles.spaceSmall}></View>
