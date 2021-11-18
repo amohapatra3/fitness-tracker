@@ -49,51 +49,62 @@ class Today extends React.Component {
       });
     });
   }
+
   componentDidUpdate(prevProps, prevState) {
-    if (prevState.activities !== this.state.activities) {
-      this.state.activities.forEach((element) => {
-        this.setState((prevState) => {
-          return {
-            exerciseMinutes: prevState.exerciseMinutes + element.duration,
-          };
-        });
+    fetch("http://cs571.cs.wisc.edu:5000/users/" + this.props.username, {
+      method: "GET",
+      headers: { "x-access-token": this.props.accessToken },
+    })
+      .then((res) => res.json())
+      .then((res) => {
+        if (prevState.goalMinutes !== res.goalDailyActivity)
+          this.setState({
+            goalMinutes: res.goalDailyActivity,
+          });
       });
-    }
+    fetch("http://cs571.cs.wisc.edu:5000/activities/", {
+      method: "GET",
+      headers: { "x-access-token": this.props.accessToken },
+    })
+      .then((res) => res.json())
+      .then((res) => {
+        if (prevState.activities !== res.activities)
+          this.setState({
+            activities: res.activities,
+          });
+      });
   }
 
   render() {
-    //let today = new Date();
+    let totalMinutes = 0;
     return (
       <View>
-        <Text> Your goals for the day! </Text>
-        <Text>
-          {" "}
-          {this.state.exerciseMinutes + "/" + this.state.goalMinutes}
-        </Text>
         <Text>Your activities today!</Text>
         {this.state.activities
           ? this.state.activities.map((key, index) => {
-              console.log(new Date(key.date).toDateString());
               if (
                 new Date(key.date).toDateString() === new Date().toDateString()
               )
-                return (
-                  <View>
-                    <Text>{key.name}</Text>
-                    <Text>Duration: {key.duration}</Text>
-                    <Text>Calories: {key.calories}</Text>
-                    <Text>
-                      Date:{" "}
-                      {new Date(key.date).toDateString() +
-                        " " +
-                        new Date(key.date).getHours() +
-                        ":" +
-                        new Date(key.date).getMinutes()}
-                    </Text>
-                  </View>
-                );
+                totalMinutes += key.duration;
+              return (
+                <View>
+                  <Text>{key.name}</Text>
+                  <Text>Duration: {key.duration}</Text>
+                  <Text>Calories: {key.calories}</Text>
+                  <Text>
+                    Date:{" "}
+                    {new Date(key.date).toDateString() +
+                      " " +
+                      new Date(key.date).getHours() +
+                      ":" +
+                      new Date(key.date).getMinutes()}
+                  </Text>
+                </View>
+              );
             })
           : null}
+        <Text> Your exercise minutes goal for the day! </Text>
+        <Text> {totalMinutes + "/" + this.state.goalMinutes}</Text>
       </View>
     );
   }

@@ -279,9 +279,17 @@ class Exercise extends React.Component {
             return (
               <View>
                 <Text key={key.name}>Name {key.name}</Text>
-                <Text key={key.duration}>Duration {key.duration}</Text>
-                <Text key={key.calories}>Calories{key.calories}</Text>
-                <Text key={key.date}>Date {key.date}</Text>
+                <Text key={key.duration}>Duration: {key.duration}</Text>
+                <Text key={key.calories}>Calories: {key.calories}</Text>
+                <Text key={key.date}>
+                  {" "}
+                  Date:{" "}
+                  {new Date(key.date).toDateString() +
+                    " " +
+                    new Date(key.date).getHours() +
+                    ":" +
+                    new Date(key.date).getMinutes()}
+                </Text>
                 <Button
                   color="#942a21"
                   style={styles.buttonInline}
