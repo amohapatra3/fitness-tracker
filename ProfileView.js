@@ -8,7 +8,7 @@ import {
   TextInput,
   View,
 } from "react-native";
-import Icon from "react-native-vector-icons/FontAwesome5";
+import Icon from "react-native-vector-icons/Ionicons";
 import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
 import Today from "./Today";
 import Exercise from "./Exercise";
@@ -21,7 +21,26 @@ class ProfileView extends React.Component {
   render() {
     const Tabs = createBottomTabNavigator();
     return (
-      <Tabs.Navigator>
+      <Tabs.Navigator
+        screenOptions={({ route }) => ({
+          tabBarIcon: ({ focused, color, size }) => {
+            let iconName;
+
+            if (route.name === "Today") {
+              iconName = "today-outline";
+            } else if (route.name === "Exercise") {
+              iconName = "barbell-outline";
+            } else if (route.name === "Goals") {
+              iconName = "analytics-outline";
+            }
+
+            // You can return any component that you like here!
+            return <Icon name={iconName} size={size} color={color} />;
+          },
+          tabBarActiveTintColor: "tomato",
+          tabBarInactiveTintColor: "gray",
+        })}
+      >
         <Tabs.Screen
           name="Today"
           options={{
