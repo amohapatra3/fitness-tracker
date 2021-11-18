@@ -8,9 +8,7 @@ import {
 } from "react-native";
 import React from "react";
 import { Dimensions } from "react-native";
-var totalExercise = 0;
-var goal = 0;
-var activities = [];
+
 class Today extends React.Component {
   constructor() {
     super();
@@ -21,14 +19,16 @@ class Today extends React.Component {
       activities: [],
     };
   }
-  componentDidUpdate() {
+  componentDidMount() {
     fetch("http://cs571.cs.wisc.edu:5000/users/" + this.props.username, {
       method: "GET",
       headers: { "x-access-token": this.props.accessToken },
     })
       .then((res) => res.json())
       .then((res) => {
-        goal = res.goalDailyActivity;
+        this.setState({
+          goalMinutes: res.goalDailyActivity,
+        });
       });
     fetch("http://cs571.cs.wisc.edu:5000/activities/", {
       method: "GET",
@@ -36,33 +36,62 @@ class Today extends React.Component {
     })
       .then((res) => res.json())
       .then((res) => {
-        activities = res.activities;
+        this.setState({
+          activities: res.activities,
+        });
       });
 
-    activities.forEach((element) => {
-      totalExercise += element.duration;
+    this.state.activities.forEach((element) => {
+      this.setState((prevState) => {
+        return {
+          exerciseMinutes: prevState.exerciseMinutes + element.duration,
+        };
+      });
     });
   }
-  getAllExercises() {}
+  componentDidUpdate(prevProps, prevState) {
+    if (prevState.activities !== this.state.activities) {
+      this.state.activities.forEach((element) => {
+        this.setState((prevState) => {
+          return {
+            exerciseMinutes: prevState.exerciseMinutes + element.duration,
+          };
+        });
+      });
+    }
+  }
 
   render() {
-    let today = new Date();
+    //let today = new Date();
     return (
       <View>
         <Text> Your goals for the day! </Text>
-        <Text> {totalExercise + "/" + goal}</Text>
+        <Text>
+          {" "}
+          {this.state.exerciseMinutes + "/" + this.state.goalMinutes}
+        </Text>
         <Text>Your activities today!</Text>
-        {activities
-          ? activities.map((key, index) => {
-              //if (key.date.toDateString() === today.toDateString())
-              return (
-                <View>
-                  <Text>{key.name}</Text>
-                  <Text>Duration: {key.duration}</Text>
-                  <Text>Calories: {key.calories}</Text>
-                  <Text>Date: {key.date.toDateString()}</Text>
-                </View>
-              );
+        {this.state.activities
+          ? this.state.activities.map((key, index) => {
+              console.log(new Date(key.date).toDateString());
+              if (
+                new Date(key.date).toDateString() === new Date().toDateString()
+              )
+                return (
+                  <View>
+                    <Text>{key.name}</Text>
+                    <Text>Duration: {key.duration}</Text>
+                    <Text>Calories: {key.calories}</Text>
+                    <Text>
+                      Date:{" "}
+                      {new Date(key.date).toDateString() +
+                        " " +
+                        new Date(key.date).getHours() +
+                        ":" +
+                        new Date(key.date).getMinutes()}
+                    </Text>
+                  </View>
+                );
             })
           : null}
       </View>
