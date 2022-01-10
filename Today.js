@@ -20,7 +20,7 @@ class Today extends React.Component {
     };
   }
   componentDidMount() {
-    fetch("http://cs571.cs.wisc.edu:5000/users/" + this.props.username, {
+    fetch("http://127.0.0.1:5000/users/" + this.props.username, {
       method: "GET",
       headers: { "x-access-token": this.props.accessToken },
     })

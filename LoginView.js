@@ -24,7 +24,7 @@ class LoginView extends React.Component {
    *
    */
   handleLogin() {
-    fetch("http://cs571.cs.wisc.edu:5000/login", {
+    fetch("http://127.0.0.1:5000/login", {
       method: "GET",
       headers: {
         Authorization:

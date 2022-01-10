@@ -51,8 +51,7 @@ class Exercise extends React.Component {
    *
    */
   handleSaveExercise() {
-    console.log(this.state.date.toDateString());
-    fetch("http://cs571.cs.wisc.edu:5000/activities/", {
+    fetch("http://127.0.0.1:5000/activities/", {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
@@ -82,7 +81,7 @@ class Exercise extends React.Component {
     });
   }
   deleteExercise(id) {
-    fetch("http://cs571.cs.wisc.edu:5000/activities/" + id, {
+    fetch("http://127.0.0.1:5000/activities/" + id, {
       method: "DELETE",
       headers: {
         "x-access-token": this.props.accessToken,
@@ -94,7 +93,7 @@ class Exercise extends React.Component {
       });
   }
   editExercise() {
-    fetch("http://cs571.cs.wisc.edu:5000/activities/" + this.state.id, {
+    fetch("http://127.0.0.1:5000/activities/" + this.state.id, {
       method: "PUT",
       headers: {
         "Content-Type": "application/json",
@@ -120,7 +119,7 @@ class Exercise extends React.Component {
     });
   }
   getAllExercises() {
-    fetch("http://cs571.cs.wisc.edu:5000/activities/", {
+    fetch("http://127.0.0.1:5000/activities/", {
       method: "GET",
       headers: { "x-access-token": this.props.accessToken },
     })

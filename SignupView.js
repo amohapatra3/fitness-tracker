@@ -21,7 +21,7 @@ class SignupView extends React.Component {
    *
    */
   handleCreateAccount() {
-    fetch("http://cs571.cs.wisc.edu:5000/users", {
+    fetch("http://127.0.0.1:5000/users", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({
