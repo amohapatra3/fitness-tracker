@@ -1,3 +1,4 @@
+This code was written as part of CS 571- Building User Interfaces at UW Madison.
 # React Native 2 &alpha;
 
 ## Get started
